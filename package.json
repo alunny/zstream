@@ -12,5 +12,8 @@
     "unzip"
   ],
   "author": "alunny",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nodeunit": "~0.7.4"
+  }
 }
