@@ -51,5 +51,23 @@ exports['simple-flat.zip'] = {
         });
 
         p.parse(simpleFlatZip);
+    },
+
+    'should emit one end-of-cd event': function (test) {
+        var p = new Parser,
+            endOfCD = 0;
+
+        p.on('end-of-cd', function (file) {
+            endOfCD++;
+        });
+
+        p.on('end', function (err) {
+            if (err) throw err;
+
+            test.equal(1, endOfCD);
+            test.done();
+        });
+
+        p.parse(simpleFlatZip);
     }
 }

@@ -1,10 +1,14 @@
-var C = require('./constants'),
-    EventEmitter = require('events').EventEmitter,
+// nodejs dependencies
+var EventEmitter = require('events').EventEmitter,
     util = require('util'),
-    zlib = require('zlib'),
-    LocalFileHeader = require('./headers/local-file-header'),
-    CDFileHeader = require('./headers/cd-file-header'),
-    FileEntry = require('./file-entry');
+    zlib = require('zlib');
+
+// zstream dependencies
+var C = require('./constants'),
+    LocalFileHeader     = require('./headers/local-file-header'),
+    CDFileHeader        = require('./headers/cd-file-header'),
+    CDEndSignature      = require('./headers/cd-end-signature'),
+    FileEntry           = require('./file-entry');
 
 var S = 0,
     P = C.P, // P of PK
@@ -24,7 +28,7 @@ function Parser() {
 }
 
 Parser.Events = [
-    'entry', 'cd-header'
+    'entry', 'cd-header', 'end-of-cd'
 ]
 
 util.inherits(Parser, EventEmitter);
@@ -44,8 +48,7 @@ Parser.prototype.parse = function (buf) {
                         this.handleCDHeader(buf);
 
                     } else if (sig == C.END_CENTRAL_DIR_SIG) {
-                        console.log('end central dir @ ' + this._pos)
-                        this._pos += 4;
+                        this.handleEndOfCD(buf);
 
                     } else {
                         // signature not recognized
@@ -85,6 +88,15 @@ Parser.prototype.handleCDHeader = function (buf) {
     this.emit('cd-header', header);
 
     this._pos += header.headerLength;
+}
+
+Parser.prototype.handleEndOfCD = function (buf) {
+    var buf = buf.slice(this._pos),
+        sig = new CDEndSignature(buf);
+
+    this.emit('end-of-cd', sig);
+
+    this._pos += sig.signatureLength;
 }
 
 module.exports = Parser;
