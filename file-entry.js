@@ -21,11 +21,28 @@ function FileEntry(header, buffer, offset) {
 
 util.inherits(FileEntry, Stream);
 
+// fake pipe for fun and profit
+FileEntry.prototype.pipe = function (dest) {
+    var algo = C.COMPRESSION_METHODS[this.header.compressionMethod],
+        extractor = null;
+
+    if (algo == 'DEFLATE') {
+        // TODO: real stream!
+
+        extractor = zlib.createInflateRaw();
+        extractor.pipe(dest);
+
+        extractor.end(this.compressedData);
+    } else {
+        throw new Error('unhandled compression method ' + algo);
+    }
+}
+
 FileEntry.prototype.extract = function (cb) {
     var algo = C.COMPRESSION_METHODS[this.header.compressionMethod];
 
     if (algo == 'DEFLATE') {
-        // TODO: call zlib.deflate, pass callback
+        // TODO: call zlib.inflateRaw, pass callback
         console.log('DEFLATE FOR ' + this.path);
     } else {
         throw new Error('unhandled compression method ' + algo);
