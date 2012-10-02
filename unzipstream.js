@@ -1,30 +1,46 @@
 /*
  * Writable unzip stream
  */
-var Stream = require('stream').Stream,
-    util = require('util'),
-    constants = require('./constants');
+var Stream  = require('stream').Stream,
+    util    = require('util'),
+    Parser  = require('./parser'),
+    C       = require('./constants');
 
 function UnzipStream() {
+    var me = this;
+
     this.readable = false;
     this.writable = true;
 
+    this.parser = new Parser();
+
+    this.parser.on('entry', function (entry) {
+        // just pass that through
+        me.emit('entry', entry);
+    });
+
     this._offset = 0;
-    this._remainder = null; // unparsed part of buffer
 }
 
 util.inherits(UnzipStream, Stream);
 
+/*
+ * when data comes in, gets piped to Parser
+ * appropriate actions on parse events
+ */
 UnzipStream.prototype.write = function (data) {
     if (data) {
-        console.log(data);
+        this.parser.parse(data);
     }
+
+    return true;
 }
 
 UnzipStream.prototype.end = function (data) {
     if (data) {
-        console.log(data);
+        this.parser.parse(data);
     }
+
     this.emit('end');
 }
 
