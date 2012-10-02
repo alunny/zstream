@@ -9,7 +9,7 @@ zstream is super early, and not ready for use yet.
 
 ## Usage
 
-Recursively zip up a directory:
+Recursively zip up a directory (this doesn't work yet):
 
 ````js
 var zs = require('zstream'),
@@ -29,11 +29,9 @@ var zs = require('zstream'),
     fs = require('fs'),
     fstream = require('fstream'); // isaacs/fstream
 
-var targetDir = fstream.Writer('new/directory');
-
 fs.createReadStream('somezipfile.zip')
-    .pipe(zs.UnzipStream())
-    .pipe(targetDir);
+    .pipe(new zs.UnzipStream())
+    .pipe(fstream.Writer('new/directory'));
 ````
 
 ## authors
