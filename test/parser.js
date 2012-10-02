@@ -33,5 +33,23 @@ exports['simple-flat.zip'] = {
         });
 
         p.parse(simpleFlatZip);
+    },
+
+    'should emit two cd-header events': function (test) {
+        var p = new Parser,
+            cdHeaders = 0;
+
+        p.on('cd-header', function (file) {
+            cdHeaders++;
+        });
+
+        p.on('end', function (err) {
+            if (err) throw err;
+
+            test.equal(2, cdHeaders);
+            test.done();
+        });
+
+        p.parse(simpleFlatZip);
     }
 }

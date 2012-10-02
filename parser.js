@@ -3,6 +3,7 @@ var C = require('./constants'),
     util = require('util'),
     zlib = require('zlib'),
     LocalFileHeader = require('./headers/local-file-header'),
+    CDFileHeader = require('./headers/cd-file-header'),
     FileEntry = require('./file-entry');
 
 var S = 0,
@@ -23,7 +24,7 @@ function Parser() {
 }
 
 Parser.Events = [
-    'entry'
+    'entry', 'cd-header'
 ]
 
 util.inherits(Parser, EventEmitter);
@@ -40,9 +41,10 @@ Parser.prototype.parse = function (buf) {
                         this.handleLocalFile(buf);
 
                     } else if (sig == C.CENTRAL_DIR_FILE_HEADER_SIG) {
-                        this._pos += 4;
+                        this.handleCDHeader(buf);
 
                     } else if (sig == C.END_CENTRAL_DIR_SIG) {
+                        console.log('end central dir @ ' + this._pos)
                         this._pos += 4;
 
                     } else {
@@ -74,6 +76,15 @@ Parser.prototype.handleLocalFile = function (buf) {
     this.emit('entry', entry);
 
     this._pos += header.dataOffset + header.compressedSize;
+}
+
+Parser.prototype.handleCDHeader = function (buf) {
+    var buf = buf.slice(this._pos),
+        header  = new CDFileHeader(buf);
+
+    this.emit('cd-header', header);
+
+    this._pos += header.headerLength;
 }
 
 module.exports = Parser;

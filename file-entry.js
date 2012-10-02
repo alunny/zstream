@@ -10,8 +10,6 @@ var zlib    = require('zlib'),
 function FileEntry(header, buffer, offset) {
     var offset = offset || 0;
 
-    console.log(header.filename)
-
     this.compressedData = buffer.slice(offset, offset + header.compressedSize);
     this.header = header;
 
