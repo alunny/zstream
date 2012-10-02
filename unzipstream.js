@@ -9,7 +9,7 @@ var Stream  = require('stream').Stream,
 function UnzipStream() {
     var me = this;
 
-    this.readable = false;
+    this.readable = true;
     this.writable = true;
 
     this.parser = new Parser();
@@ -34,6 +34,19 @@ UnzipStream.prototype.write = function (data) {
     }
 
     return true;
+}
+
+/*
+ * patch pipe for use with fstream
+ */
+UnzipStream.prototype.pipe = function (dest) {
+    if (typeof dest.add == 'function') {
+        this.on('entry', function (entry) {
+            dest.add(entry);
+        });
+    }
+
+    Stream.prototype.pipe.call(this, dest);
 }
 
 UnzipStream.prototype.end = function (data) {

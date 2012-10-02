@@ -14,6 +14,7 @@ function FileEntry(header, buffer, offset) {
     this.header = header;
 
     this.path = header.filename;
+    this.props = {}
 
     this.readable = true;
     this.writable = false;
@@ -48,5 +49,9 @@ FileEntry.prototype.extract = function (cb) {
         throw new Error('unhandled compression method ' + algo);
     }
 }
+
+// placeholders for now
+FileEntry.prototype.pause   = function () {}
+FileEntry.prototype.resume  = function () {}
 
 module.exports = FileEntry;
