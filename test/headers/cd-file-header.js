@@ -7,8 +7,6 @@ var format  = require('util').format,
     flatAtCD        = simpleFlatZip.slice(621),
     simpleCDEntry   = new CDFileHeader(flatAtCD);
 
-    console.log(simpleCDEntry);
-
 exports['simple-flat.zip - first CD entry'] = {
     'filename': function (test) {
         test.equal(simpleCDEntry.filename, 'config.xml');

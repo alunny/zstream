@@ -3,5 +3,6 @@
  */
 
 module.exports = {
+    Parser: require('./parser'),
     UnzipStream: require('./unzipstream')
 }
