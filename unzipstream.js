@@ -1,5 +1,5 @@
 /*
- * Writable unzip stream
+ * readable/writable unzip stream
  */
 var Stream  = require('stream').Stream,
     util    = require('util'),

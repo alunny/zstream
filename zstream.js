@@ -1,8 +1,8 @@
 /*
  * zstream: zipping and unzipping in JavaScript
  */
-
 module.exports = {
-    Parser: require('./parser'),
-    UnzipStream: require('./unzipstream')
+    Parser:         require('./parser'),
+    UnzipStream:    require('./unzipstream'),
+    ZipStream:      require('./zipstream')
 }
